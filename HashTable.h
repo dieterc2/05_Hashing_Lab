@@ -93,30 +93,38 @@ HashTable<Key,T>::HashTable(){
 
 template <class Key, class T>
 HashTable<Key,T>::~HashTable() {
-  //TODO
+	delete[] backingArray;
 }
 
 template <class Key, class T>
 unsigned long HashTable<Key,T>::calcIndex(Key k){
-  int i = hash(k);
-  while(backingArray[i].isNull != true){
-	  if(backingArray[i].isDel != true && backingArray[i].k == k)
+  int i = hash(k) % backingArraySize;
+  while(backingArray[i].isNull == false){
+	  if(backingArray[i].isDel == false && backingArray[i].k == k)
 		  return i; // returns this only if there is a key k
-	  i = (i == size()-1) ? 0: i + 1;
+	  i = (i == backingArraySize-1) ? 0: i + 1;
   }
 
-  if(i >= hash(k))
+  if(i >= hash(k)% backingArraySize)
 	  return i;
-  else if(hash(k) > size())
+  else if(hash(k)% backingArraySize > backingArraySize)
 	return numItems;//This indicates failure, since it is an impossible value
 }
 
 template <class Key, class T>
 void HashTable<Key,T>::add(Key k, T x){
-	int i = calcIndex(k);
-	numItems++;
-	
-
+	int i = hash(k)% backingArraySize;
+	if(i > backingArraySize){
+		grow();
+	} else{
+		int j = calcIndex(k);
+		backingArray[j].isNull = false;
+		backingArray[j].x = x;
+		backingArray[j].k = k;
+		T x = backingArray[j].x;
+		numItems++;
+		std::cout << j << " " << x << std::endl;
+	}
 }
 
 template <class Key, class T>
@@ -126,8 +134,13 @@ void HashTable<Key,T>::remove(Key k){
 
 template <class Key, class T>
 T HashTable<Key,T>::find(Key k){
-	T x;
-	return x;
+	int i = hash(k) % backingArraySize;
+	while(backingArray[i].isNull == false){
+		if(backingArray[i].isDel == false && backingArray[i].k == k)
+			  return backingArray[i].x; // returns this only if there is a key k
+		 i = (i == backingArraySize-1) ? 0: i + 1;
+	 }
+	return NULL;
 }
 
 template <class Key, class T>
