@@ -129,7 +129,11 @@ void HashTable<Key,T>::add(Key k, T x){
 
 template <class Key, class T>
 void HashTable<Key,T>::remove(Key k){
-  //TODO
+
+	int j = calcIndex(k);
+	backingArray[j].isDel = true;
+	numItems--;
+	numRemoved++;
 }
 
 template <class Key, class T>
