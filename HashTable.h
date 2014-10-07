@@ -134,6 +134,10 @@ void HashTable<Key,T>::remove(Key k){
 
 template <class Key, class T>
 T HashTable<Key,T>::find(Key k){
+	
+	if(keyExists(k) == false)
+		throw std::string("Key does not exist!");
+	
 	int i = hash(k) % backingArraySize;
 	while(backingArray[i].isNull == false){
 		if(backingArray[i].isDel == false && backingArray[i].k == k)
@@ -145,8 +149,18 @@ T HashTable<Key,T>::find(Key k){
 
 template <class Key, class T>
 bool HashTable<Key,T>::keyExists(Key k){
-  //TODO
-  return false;
+	int i = calcIndex(k);
+	if(i > backingArraySize)
+		return false;
+	else{
+		int i = hash(k) % backingArraySize;
+		while(backingArray[i].isNull == false){
+			if(backingArray[i].isDel == false && backingArray[i].k == k)
+				return true; // returns this only if there is a key k
+			i = (i == backingArraySize-1) ? 0: i + 1;
+		}
+		return false;
+	}
 }
 
 template <class Key, class T>
