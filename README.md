@@ -23,7 +23,7 @@ Questions
 
 1. These all take 0(1) time becuase they directly access the elements of the array using the key. Does not matter on numItems.
 2. Add uses the key to find where to update the hash record, so without the grow call this function is 0(1).
-3. TODO
+3. Growth took a lot of work for me but it takes 0(n) time as it iterates through all elements of the old backing array (is dependant on all n items).
 4. Backing array is deleted and all object instances of new are deleted in the same functions.
 
 #### 2. I decided to use two function (`keyExists` and `find`) to enable lookup of keys. Another option would have been to have `find` return a `T*`, which would be `NULL` if an item with matching key is not found. Which design do you think would be better? Explain your reasoning. You may notice that the designers of C++ made the same decision I did when they designed http://www.cplusplus.com/reference/unordered_map/unordered_map/

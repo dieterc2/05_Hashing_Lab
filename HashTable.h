@@ -60,7 +60,7 @@ private:
   // map to a different slot in the array. You may just want to use add()
   // after initializing the new array.
   void grow();
-
+  
   //This helper method should take a key, and return the index for that
   // item within the hash table. If the item already exists, return the
   // index of the existing item. If the item doesn't exist, return the index
@@ -81,7 +81,13 @@ private:
 // remove
 #include <string>
 
-
+/**
+* Authored By: Chris Dieter with help from Dr. Brinkman and 
+* Open Data Structures textbook, written by Pat Morin. After loosely
+* basing calcIndex, find, and keyExists after an implementation of 
+* find function in the book, all other functions were modeled after previous
+* homework assignments and in class lectures.
+*/
 template <class Key, class T>
 HashTable<Key,T>::HashTable(){
 	
@@ -113,18 +119,18 @@ unsigned long HashTable<Key,T>::calcIndex(Key k){
 
 template <class Key, class T>
 void HashTable<Key,T>::add(Key k, T x){
-	int i = hash(k)% backingArraySize;
-	if(i > backingArraySize){
+	
+	if(numItems + numRemoved >= backingArraySize/2){
 		grow();
-	} else{
-		int j = calcIndex(k);
-		backingArray[j].isNull = false;
-		backingArray[j].x = x;
-		backingArray[j].k = k;
-		T x = backingArray[j].x;
-		numItems++;
-		std::cout << j << " " << x << std::endl;
-	}
+	} 
+	int j = calcIndex(k);
+	backingArray[j].isNull = false;
+	backingArray[j].isDel = false;
+	backingArray[j].x = x;
+	backingArray[j].k = k;
+	//T x = backingArray[j].x;
+	numItems++;
+	
 }
 
 template <class Key, class T>
@@ -174,6 +180,34 @@ unsigned long HashTable<Key,T>::size(){
 
 template <class Key, class T>
 void HashTable<Key,T>::grow(){
-  //TODO
+	int j = 0;
+	int i = 53;
+	while(i == backingArraySize){
+		j++;
+		i = hashPrimes[j];
+	}
+	
+
+	HashRecord* copyArray = new HashRecord[hashPrimes[j]];
+	
+	for(int i = 0; i < backingArraySize; i++){
+		if(backingArray[i].isNull == false && backingArray[i].isDel == false){
+			Key k = backingArray[i].k;
+			T x = backingArray[i].x;
+			int p = hash(k) % hashPrimes[j];
+			std::cout << p << std::endl;
+			while(copyArray[p].isNull == false)
+				p = (p == hashPrimes[j] - 1) ? 0 : p + 1;
+			copyArray[p].k = k;
+			copyArray[p].x = x;
+			copyArray[p].isNull = false;
+			copyArray[p].isDel = false;
+		} 
+	}
+
+	numRemoved = 0;
+	backingArraySize = hashPrimes[j];
+	delete[] backingArray;
+	backingArray = copyArray;
 }
 
