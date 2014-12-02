@@ -145,16 +145,13 @@ void HashTable<Key,T>::remove(Key k){
 template <class Key, class T>
 T HashTable<Key,T>::find(Key k){
 	
-	if(keyExists(k) == false)
+	if(!keyExists(k))
 		throw std::string("Key does not exist!");
 	
-	int i = hash(k) % backingArraySize;
-	while(backingArray[i].isNull == false){
-		if(backingArray[i].isDel == false && backingArray[i].k == k)
-			  return backingArray[i].x; // returns this only if there is a key k
-		 i = (i == backingArraySize-1) ? 0: i + 1;
-	 }
+	if(backingArray[calcIndex(k)].x != NULL)
+		return backingArray[calcIndex(k)].x;
 	return NULL;
+
 }
 
 template <class Key, class T>
@@ -163,7 +160,7 @@ bool HashTable<Key,T>::keyExists(Key k){
 	if(i > backingArraySize)
 		return false;
 	else{
-		int i = hash(k) % backingArraySize;
+		
 		while(backingArray[i].isNull == false){
 			if(backingArray[i].isDel == false && backingArray[i].k == k)
 				return true; // returns this only if there is a key k
@@ -182,7 +179,7 @@ template <class Key, class T>
 void HashTable<Key,T>::grow(){
 	int j = 0;
 	int i = 53;
-	while(i == backingArraySize){
+	while(i <= backingArraySize){
 		j++;
 		i = hashPrimes[j];
 	}
@@ -192,16 +189,17 @@ void HashTable<Key,T>::grow(){
 	
 	for(int i = 0; i < backingArraySize; i++){
 		if(backingArray[i].isNull == false && backingArray[i].isDel == false){
+			
 			Key k = backingArray[i].k;
 			T x = backingArray[i].x;
-			int p = hash(k) % hashPrimes[j];
-			std::cout << p << std::endl;
+			copyArray->add(k, x);
+			/*int p = hash(k) % hashPrimes[j];
 			while(copyArray[p].isNull == false)
 				p = (p == hashPrimes[j] - 1) ? 0 : p + 1;
 			copyArray[p].k = k;
 			copyArray[p].x = x;
 			copyArray[p].isNull = false;
-			copyArray[p].isDel = false;
+			copyArray[p].isDel = false;*/
 		} 
 	}
 
