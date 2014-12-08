@@ -113,8 +113,10 @@ unsigned long HashTable<Key,T>::calcIndex(Key k){
 
   if(i >= hash(k)% backingArraySize)
 	  return i;
-  else if(hash(k)% backingArraySize > backingArraySize)
-	return numItems;//This indicates failure, since it is an impossible value
+  else 
+	  return i;
+	  //if(hash(k)% backingArraySize > backingArraySize)
+	//return numItems;//This indicates failure, since it is an impossible value
 }
 
 template <class Key, class T>
@@ -124,22 +126,25 @@ void HashTable<Key,T>::add(Key k, T x){
 		grow();
 	} 
 	int j = calcIndex(k);
+	if(backingArray[j].isDel == true)
+		numRemoved++;
 	backingArray[j].isNull = false;
 	backingArray[j].isDel = false;
 	backingArray[j].x = x;
 	backingArray[j].k = k;
-	//T x = backingArray[j].x;
 	numItems++;
 	
 }
 
 template <class Key, class T>
 void HashTable<Key,T>::remove(Key k){
-
-	int j = calcIndex(k);
-	backingArray[j].isDel = true;
-	numItems--;
-	numRemoved++;
+	if(keyExists(k)){
+		int j = calcIndex(k);
+		backingArray[j].isDel = true;
+		numItems--;
+		numRemoved++;
+	} else
+		throw std::string("No such key exists!");
 }
 
 template <class Key, class T>
@@ -192,14 +197,14 @@ void HashTable<Key,T>::grow(){
 			
 			Key k = backingArray[i].k;
 			T x = backingArray[i].x;
-			copyArray->add(k, x);
-			/*int p = hash(k) % hashPrimes[j];
+			
+			int p = hash(k) % hashPrimes[j];
 			while(copyArray[p].isNull == false)
 				p = (p == hashPrimes[j] - 1) ? 0 : p + 1;
 			copyArray[p].k = k;
 			copyArray[p].x = x;
 			copyArray[p].isNull = false;
-			copyArray[p].isDel = false;*/
+			copyArray[p].isDel = false;
 		} 
 	}
 
