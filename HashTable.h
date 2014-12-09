@@ -104,19 +104,24 @@ HashTable<Key,T>::~HashTable() {
 
 template <class Key, class T>
 unsigned long HashTable<Key,T>::calcIndex(Key k){
+  int x = 0;
   int i = hash(k) % backingArraySize;
   while(backingArray[i].isNull == false){
 	  if(backingArray[i].isDel == false && backingArray[i].k == k)
 		  return i; // returns this only if there is a key k
+	  if(backingArray[i].isDel == true)
+		  x = i; // this checks for already deleted spaces, and will put it there if it finds them
 	  i = (i == backingArraySize-1) ? 0: i + 1;
   }
 
+  if(x != 0){
+	  return x;
+	  numRemoved--; // have to update this as the deleted spot is not removed anymore
+  }
   if(i >= hash(k)% backingArraySize)
 	  return i;
   else 
 	  return i;
-	  //if(hash(k)% backingArraySize > backingArraySize)
-	//return numItems;//This indicates failure, since it is an impossible value
 }
 
 template <class Key, class T>
